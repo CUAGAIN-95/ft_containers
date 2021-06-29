@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 18:33:47 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/06/24 06:12:09 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/06/24 18:10:24 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ int		main(void)
 	std::cout << s.top() << std::endl;
 
 	ft::queue<char>	c;
+
 	std::cout << c.empty() << std::endl;
 	std::cout << c.size() << std::endl;
 
