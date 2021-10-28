@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/12 04:27:57 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/28 19:55:57 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 # include <memory>	// allocator의 header
 # include <cstddef>
-# include "./iterator/Iterator.hpp"	// iterator/Iterator.hpp
+# include "utils.hpp" // iterator포함
 
 namespace	ft
 {
@@ -52,7 +52,25 @@ namespace	ft
 		{
 			size_type	n = static_cast<size_type>(_n);
 			m_start = m_alloc.allocate(n);
+			m_end_of_storage = m_start + n;
+			m_finish = m_start;
+			while (m_finish != m_end_of_storage)
+			{
+				m_alloc.construct(&*m_finish, _val);
+				m_finish++;
+			}
 		}
+		template < typename InputIterator >
+		void	initialize_dispatch(InputIterator first, InputIterator last, __false_type)
+		{
+			const size_type n = ft::distance(first, last);
+			m_start = m_alloc.allocate(n);
+			m_end_of_storage = m_start + n;
+			m_finish = m_start;
+			for (; first != last; m_finish++, first++)
+				m_alloc.construct(&*m_finish, *first);
+		}
+
 		// 해당 position에 값을 insert하는 함수
 		template < typename Size, typename Val >
 		void	insert_dispatch(iterator position, Size _n, Val _val, __true_type)
@@ -101,11 +119,10 @@ namespace	ft
 				}
 			}
 		}
-
 		template < typename InputIterator >
 		void	insert_dispatch(iterator pos, InputIterator first, InputIterator last, __false_type)
 		{
-			for (; first != last; ++pos, ++first)
+			for (; first != last; pos++, first++)
 				pos = insert(pos, *first);
 		}
 
@@ -115,7 +132,7 @@ namespace	ft
 		{
 			pointer	cur = result;
 
-			for (; first != last; ++first, ++cur)
+			for (; first != last; first++, cur++)
 				m_alloc.construct(cur, *first);
 			return (cur);
 		}
@@ -123,7 +140,7 @@ namespace	ft
 		template < class _T>
 		void	uninitialized_fill_val(_T *first, _T *last, const _T& val)
 		{
-			for (; first != last; ++first)
+			for (; first != last; first++)
 				m_alloc.construct(first, val);
 		}
 		template < class _Size, class _T >
@@ -136,7 +153,7 @@ namespace	ft
 		template < class _T >
 		static void	initialized_fill_val(_T *first, _T *last, const _T& val)
 		{
-			for (; first != last; ++first)
+			for (; first != last; first++)
 				*first = val;
 		}
 		template < class _Size, class _T >
@@ -145,7 +162,30 @@ namespace	ft
 			initialized_fill_val(first, first + n, val);
 			return (first + n);
 		}
-		
+
+		template < typename BI1, typename BI2 >
+		static BI2 copy_move_back(BI1 first, BI1 last, BI2 result)
+		{
+			while (first != last)
+				*--result = *--last;
+			return (result);
+		}
+
+		void		erase_at_end(pointer pos)
+		{
+			pointer	first = pos;
+
+			for (; first != m_finish; first++)
+				m_alloc.destroy(first);
+			m_finish = pos;
+		}
+
+		void	range_check(size_type n) const
+		{
+			if (n >= size())
+				throw std::out_of_range("Vector::range_check");
+		}
+
 	public:
 		/* MEMBER FUNCTIONS */
 		// Construct Vector (public member function)
@@ -180,20 +220,28 @@ namespace	ft
 		}
 
 		// copy
-		Vector (const Vector& x);
-		/*
-		**	/////
-		*/
+		Vector (const Vector& x)
+		:	m_alloc(x.m_alloc)
+		{ initialize_dispatch(x.begin(), x.end(), __false_type()); }
 
 		// Vector destructor (public member function)
-		~Vector();
-		/*
-		**	/////
-		*/
+		~Vector()
+		{
+			clear();
+			m_alloc.deallocate(m_start, capacity());
+			m_start = 0;
+			m_finish = 0;
+			m_end_of_storage = 0;
+		}
 
 		// Assign content (public member function)
 		// copy
-		Vector& operator= (const Vector& x);
+		Vector& operator= (const Vector& x)
+		{
+			if (this != &x)
+				assign(x.begin(), x.end());
+			return (*this);
+		}
 
 		/* ITERATORS */
 		// Return iterator to beginning (public member function)
@@ -238,19 +286,13 @@ namespace	ft
 		{
 			// 에러 처리 (n이 max_size보다 클 때)
 			if (n > max_size())
-				throw std::length_error("vector::resize");
+				throw std::length_error("Vector::resize");
 			// 기본 사이즈보다 새로운 사이즈가 클 때
 			if (n > size())
 				insert(this->end(), n - size(), val);
 			// 기본 사이즈보다 새로운 사이즈가 작을 때
 			else if (n < size())
-			{
-				while (size() > n)
-				{
-					--m_finish;
-					m_alloc.destroy(m_finish);
-				}
-			}
+				erase_at_end(m_start + n);
 		}
 
 		// Return size of allocated storage capacity (public member function)
@@ -289,45 +331,100 @@ namespace	ft
 				// 새로운 주소로 저장
 				m_start = tmp_start;
 				m_finish = tmp_finish;
-				m_end_of_storage = temp_end_of_storage;
+				m_end_of_storage = tmp_end_of_storage;
 			}
 		}
 
 		/* ELEMENT ACCESS */
 		// Access element (public member function)
-		reference operator[] (size_type n);
+		reference operator[] (size_type n)
+		{ return (*(m_start + n)); }
 
-		const_reference operator[] (size_type n) const;
+		const_reference operator[] (size_type n) const
+		{ return (*(m_start + n)); }
 
 		// Access element (public member function)
-		reference at (size_type n);
+		reference at (size_type n)
+		{
+			range_check(n);
+			return ((*this)[n]);
+		}
 
-		const_reference at (size_type n) const;
+		const_reference at (size_type n) const
+		{
+			range_check(n);
+			return ((*this)[n]);
+		}
 
 		// Access first element (public member function)
-		reference front();
+		reference front()
+		{ return (*begin()); }
 
-		const_reference front() const;
+		const_reference front() const
+		{ return (*begin()); }
 
 		// Access last element (public member function)
-		reference back();
+		reference back()
+		{ return (*(end() - 1)); }
 
-		const_reference back() const;
+		const_reference back() const
+		{ return (*(end() - 1)); }
 
 		/* MODIFIERS */
 		// Assign Vector content (public member function)
 		// range
 		template <class InputIterator>
-		void assign (InputIterator first, InputIterator last);
+		void assign (InputIterator first, InputIterator last)
+		{
+			this->clear();
+			size_type	n = ft::distance(first, last);
+			if (n > capacity())
+			{
+				m_alloc.deallocate(m_start, capacity());
+				m_start = m_alloc.allocate(n);
+				m_finish = m_start;
+				m_end_of_storage = m_start + n;
+			}
+			for (; first != last; first++, m_finish++)
+				m_alloc.construct(m_finish, *first);
+		}
 
 		// fill
-		void assign (size_type n, const value_type& val);
+		void assign (size_type n, const value_type& val)
+		{
+			if (n > capacity)
+			{
+				Vector tmp(n, val, m_alloc);
+				tmp.swap(*this);
+			}
+			else if (n > size())
+			{
+				initialized_fill_val(m_start, m_finish, val);
+				m_finish = uninitialized_fill_n_val(m_finish, n - size(), val);
+			}
+			else
+				erase_at_end(initialized_fill_n_val(m_start, n, val));
+		}
 
 		// Add element at the end (public member function)
-		void push_back (const value_type& val);
+		void push_back (const value_type& val)
+		{
+			if (m_finish == m_end_of_storage) // 충분한 공간 없음
+			{
+				size_type len = size() > 0 ? 2 * size() : 1;
+				len = (len < size() || len > max_size()) ? max_size() : len;
+				reserve(len);
+			}
+			m_alloc.construct(m_finish, val);
+			m_finish++;
+		}
 
 		// Delete last element (public member function)
-		void pop_back();
+		void pop_back()
+		{
+			m_finish--;
+			m_alloc.destroy(m_finish);
+		}
 
 		// Insert elements (public member function)
 		// single element
@@ -351,33 +448,64 @@ namespace	ft
 		{ m_fill_insert(position, n, val); }
 
 		// range
-		template <class InputIterator>
+		template < class InputIterator >
 		void insert (iterator position, InputIterator first, InputIterator last)
 		{
 			typedef typename ft::__is_integer<InputIterator>::__type	_Integral;
 			insert_dispatch(position, first, last, _Integral());
 		}
 
-		// // Erase elements (public member function)
-		// iterator erase (iterator position);
+		// Erase elements (public member function)
+		iterator erase (iterator position)
+		{
+			if (position + 1 != end())
+			{
+				iterator tmp = position;
+				while (tmp != end() - 1)
+				{
+					*tmp = *(tmp + 1);
+					tmp++;
+				}
+			}
+			m_finish--;
+			m_alloc.destroy(m_finish);
+			return (position);
+		}
 
-		// iterator erase (iteraotr first, iterator last);
+		iterator erase (iteraotr first, iterator last)
+		{
+			if (first != last)
+			{
+				iterator begin = first;
+				if (last != end())
+				{
+					iterator tmp = last;
+					while (tmp != end())
+					{
+						*begin = *tmp;
+						begin++;
+						tmp++;
+					}
+				}
+				erase_at_end(first.base() + (end() - last));
+			}
+			return (first);
+		}
 
 		// Swap content (public member function)
-		void swap (Vector& x);
+		void swap (Vector& x)
+		{
+			if (this == &x)
+				return ;
+			ft::swap(m_alloc, x.m_alloc);
+			ft::swap(m_start, x.m_start);
+			ft::swap(m_finish, x.m_finish);
+			ft::swap(m_end_of_storage, x.m_end_of_storage);
+		}
 
 		// Clear content (public member function)
 		void clear()
-		{
-			size_type	i = 0;
-
-			while (m_start[i] != m_finish)
-			{
-				m_alloc.destroy(m_start[i]);
-				i++;
-			}
-			m_finish = m_start;
-		}
+		{ erase_at_end(m_start); }
 
 		/* ALLOCATOR */
 		// Get allocator (public member function)
@@ -386,27 +514,47 @@ namespace	ft
 
 	/* NON-MEMBER FUNCTION OVERLOADS */
 	// relational operators for Vector (function template)
-	template <class T, class Alloc>
-	bool operator== (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
+	template < class T, class Alloc >
+	inline bool operator== (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		typename ft::Vector<T>::const_iterator tmp_lhs = lhs.begin();
+		typename ft::Vector<T>::const_iterator tmp_rhs = rhs.begin();
+		while (tmp_lhs != lhs.end())
+		{
+			if (tmp_rhs == rhs.end() || *tmp_lhs != *tmp_rhs)
+				return (false);
+			++tmp_lhs;
+			++tmp_rhs;
+		}
+		return (true);
+	}
 
-	template <class T, class Alloc>
-	bool operator!= (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
+	template < class T, class Alloc >
+	inline bool operator!= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{ return (!(lhs == rhs)); }
+	
+	template < class T, class Alloc >
+	inline bool operator<  (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{ return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));	}
 
-	template <class T, class Alloc>
-	bool operator<  (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
+	template < class T, class Alloc >
+	inline bool operator<= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{ return (!(rhs < lhs)); }
 
-	template <class T, class Alloc>
-	bool operator<= (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
-
-	template <class T, class Alloc>
-	bool operator>  (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
-
-	template <class T, class Alloc>
-	bool operator>= (const Vector<T,Alloc>& lhs, const Vector<T,Alloc>& rhs);
-
+	template < class T, class Alloc >
+	inline bool operator>  (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{ return (rhs < lhs); }
+	
+	template < class T, class Alloc >
+	inline bool operator>= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	{ return (!(lhs < rhs)); }
+	
 	// Exchange contents of Vectors (function template)
-	template <class T, class Alloc>
-	void swap (Vector<T,Alloc>& x, Vector<T,Alloc>& y);
+	template < class T, class Alloc >
+	inline void swap (Vector<T,Alloc>& x, Vector<T,Alloc>& y)
+	{ x.swap(y); }
 }	// namespace ft
 
 #endif /* ********************************************************** VECTOR_H */

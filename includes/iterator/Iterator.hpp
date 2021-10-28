@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/23 16:46:56 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/09/13 10:30:06 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/28 19:33:22 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ namespace ft
 	/*
 	**	reverse_iterator=======================================================
 	*/
-	template<typename Iterator>
+	template < class Iterator >
 	class reverse_iterator
 	:	public iterator<typename iterator_traits<Iterator>::iterator_category,
 						typename iterator_traits<Iterator>::value_type,
@@ -192,7 +192,7 @@ namespace ft
 	/*
 	**	nomal_iterator=========================================================
 	*/
-	template<typename Iterator, typename Container>
+	template < class Iterator, class Container >
 	class nomal_iterator
 	{
 		protected:
