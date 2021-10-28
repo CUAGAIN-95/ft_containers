@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/28 19:55:31 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/28 22:36:27 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define UTILS_HPP
 
 # include "./iterator/Iterator.hpp"
+# include "./cpp_type_traits.hpp"
 
 namespace	ft
 {
