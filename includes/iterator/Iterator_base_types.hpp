@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/16 20:03:54 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/09/03 17:17:33 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/28 23:36:41 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,37 +25,37 @@ namespace ft
 
 	template <typename Category, typename T, typename Distance = ptrdiff_t, \
 				typename Pointer = T*, typename Reference = T&>
-	struct Iterator
+	struct iterator
 	{
 		typedef Category	iterator_category;
 		typedef T			value_type;
 		typedef Distance	difference_type;
 		typedef Pointer		pointer;
 		typedef Reference	reference;
-	}; // struct Iterator
+	}; // struct iterator
 
 	template<typename Iterator>
-	struct Iterator_traits
+	struct iterator_traits
 	{
 		typedef typename	Iterator::iterator_category	iterator_category;
 		typedef typename	Iterator::value_type		value_type;
 		typedef typename	Iterator::difference_type	difference_type;
 		typedef typename	Iterator::pointer			pointer;
 		typedef typename	Iterator::reference			reference;
-	}; // struct Iterator_traits
+	}; // struct iterator_traits
 
 	template<typename T>
-	struct Iterator_traits<T*>
+	struct iterator_traits<T*>
 	{
 		typedef random_access_iterator_tag	iterator_category;
 		typedef T							value_type;
 		typedef ptrdiff_t					difference_type;
 		typedef T*							pointer;
 		typedef T&							reference;
-	}; // struct Iterator_traits<T*>
+	}; // struct iterator_traits<T*>
 
 	template<typename T>
-	struct Iterator_traits<const T*>
+	struct iterator_traits<const T*>
 	{
 		typedef random_access_iterator_tag	iterator_category;
 		typedef T							value_type;
@@ -63,21 +63,5 @@ namespace ft
 		typedef const T*					pointer;
 		typedef const T&					reference;
 	}; // struct iterator_traits<const T*>
-
-	template <typename Iterator, bool HasBase>
-	struct Iter_base
-	{
-		typedef Iterator		iterator_type;
-		static iterator_type	S_base(Iterator __it)
-		{ return (__it); }
-	}; // struct Iter_base
-
-	template <typename _Iterator>
-	struct Iter_base<_Iterator, true> 
-	{
-		typedef typename Iterator::iterator_type	iterator_type;
-		static iterator_type S_base(Iterator __it)
-		{ return (__it.base()); }
-	}; // struct Iter_base
 } // namespace ft
 #endif

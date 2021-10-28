@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/28 22:36:48 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/28 23:36:15 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 
 # include <memory>	// allocator의 header
 # include <cstddef>
+# include "./iterator/normal_iterator.hpp"
+# include "./iterator/reverse_iterator.hpp"
 # include "utils.hpp" // iterator, cpp_type_traits 포함
 
 namespace	ft
