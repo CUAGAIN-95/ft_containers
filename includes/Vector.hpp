@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/28 23:36:15 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/29 15:07:30 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 namespace	ft
 {
 	template < class T, class Alloc = std::allocator<T> >
-	class Vector
+	class vector
 	{
 	public:
 		/* MEMBER TYPES */
@@ -35,8 +35,8 @@ namespace	ft
 		typedef const value_type&							const_reference;
 		typedef value_type*									pointer;
 		typedef const value_type*							const_pointer;
-		typedef ft::normal_iterator<pointer, Vector>		iterator;
-		typedef ft::normal_iterator<const_pointer, Vector>	const_iterator;
+		typedef ft::normal_iterator<pointer, vector>		iterator;
+		typedef ft::normal_iterator<const_pointer, vector>	const_iterator;
 		typedef ft::reverse_iterator<iterator>				reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>		const_reverse_iterator;
 		typedef ptrdiff_t									difference_type;
@@ -101,7 +101,7 @@ namespace	ft
 				else // 자리 부족
 				{
 					if (max_size() - size() < n)
-						throw std::length_error("Vector::insert_dispatch");
+						throw std::length_error("vector::insert_dispatch");
 					size_type	len = size() + (size() > n ? size() : n); // 2배 또는 n
 					len = (len < size() || len > max_size()) ? max_size() : len;
 					pointer		new_start = m_alloc.allocate(len);
@@ -185,19 +185,19 @@ namespace	ft
 		void	range_check(size_type n) const
 		{
 			if (n >= size())
-				throw std::out_of_range("Vector::range_check");
+				throw std::out_of_range("vector::range_check");
 		}
 
 	public:
 		/* MEMBER FUNCTIONS */
-		// Construct Vector (public member function)
+		// Construct vector (public member function)
 		// default
-		explicit Vector (const allocator_type& alloc = allocator_type())
+		explicit vector (const allocator_type& alloc = allocator_type())
 		:	m_alloc(alloc), m_start(0), m_finish(0), m_end_of_storage(0)
 		{}
 
 		// fill
-		explicit Vector (size_type n, const value_type& val = value_type(),
+		explicit vector (size_type n, const value_type& val = value_type(),
 						const allocator_type& alloc = allocator_type())
 		:	m_alloc(alloc)
 		{
@@ -213,21 +213,21 @@ namespace	ft
 
 		// range
 		template <class InputIterator>
-		Vector (InputIterator first, InputIterator last, 
+		vector (InputIterator first, InputIterator last, 
 				const allocator_type& alloc = allocator_type())
 		:	m_alloc(alloc), m_start(0), m_finish(0), m_end_of_storage(0)
 		{
-			typedef typename ft::__is_interger<InputIterator>::__type _Integral;
+			typedef typename ft::__is_integer<InputIterator>::__type _Integral;
 			initialize_dispatch(first, last, _Integral());
 		}
 
 		// copy
-		Vector (const Vector& x)
+		vector (const vector& x)
 		:	m_alloc(x.m_alloc)
 		{ initialize_dispatch(x.begin(), x.end(), __false_type()); }
 
-		// Vector destructor (public member function)
-		~Vector()
+		// vector destructor (public member function)
+		~vector()
 		{
 			clear();
 			m_alloc.deallocate(m_start, capacity());
@@ -238,7 +238,7 @@ namespace	ft
 
 		// Assign content (public member function)
 		// copy
-		Vector& operator= (const Vector& x)
+		vector& operator= (const vector& x)
 		{
 			if (this != &x)
 				assign(x.begin(), x.end());
@@ -264,7 +264,7 @@ namespace	ft
 		reverse_iterator rbegin()
 		{ return (reverse_iterator(end())); }
 
-		const_reverse_iteratotr rbegin() const
+		const_reverse_iterator rbegin() const
 		{ return (const_reverse_iterator(end())); }
 
 		// Return reverse iterator to reverse end (public member function)
@@ -288,7 +288,7 @@ namespace	ft
 		{
 			// 에러 처리 (n이 max_size보다 클 때)
 			if (n > max_size())
-				throw std::length_error("Vector::resize");
+				throw std::length_error("vector::resize");
 			// 기본 사이즈보다 새로운 사이즈가 클 때
 			if (n > size())
 				insert(this->end(), n - size(), val);
@@ -301,7 +301,7 @@ namespace	ft
 		size_type capacity() const
 		{ return (size_type(m_end_of_storage - m_start)); }
 
-		// Test whether Vector is empty (public member function)
+		// Test whether vector is empty (public member function)
 		bool empty() const
 		{ return (m_start == m_finish); }
 
@@ -309,7 +309,7 @@ namespace	ft
 		void reserve (size_type n)
 		{
 			if (n > max_size())
-				throw std::length_error("Vector::reserve");
+				throw std::length_error("vector::reserve");
 			if (n > capacity())
 			{
 				const size_type	old_size = size();
@@ -373,7 +373,7 @@ namespace	ft
 		{ return (*(end() - 1)); }
 
 		/* MODIFIERS */
-		// Assign Vector content (public member function)
+		// Assign vector content (public member function)
 		// range
 		template <class InputIterator>
 		void assign (InputIterator first, InputIterator last)
@@ -394,9 +394,9 @@ namespace	ft
 		// fill
 		void assign (size_type n, const value_type& val)
 		{
-			if (n > capacity)
+			if (n > capacity())
 			{
-				Vector tmp(n, val, m_alloc);
+				vector tmp(n, val, m_alloc);
 				tmp.swap(*this);
 			}
 			else if (n > size())
@@ -474,7 +474,7 @@ namespace	ft
 			return (position);
 		}
 
-		iterator erase (iteraotr first, iterator last)
+		iterator erase (iterator first, iterator last)
 		{
 			if (first != last)
 			{
@@ -495,7 +495,7 @@ namespace	ft
 		}
 
 		// Swap content (public member function)
-		void swap (Vector& x)
+		void swap (vector& x)
 		{
 			if (this == &x)
 				return ;
@@ -512,17 +512,17 @@ namespace	ft
 		/* ALLOCATOR */
 		// Get allocator (public member function)
 		allocator_type get_allocator() const;
-	};	// class Vector
+	};	// class vector
 
 	/* NON-MEMBER FUNCTION OVERLOADS */
-	// relational operators for Vector (function template)
+	// relational operators for vector (function template)
 	template < class T, class Alloc >
-	inline bool operator== (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator== (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{
 		if (lhs.size() != rhs.size())
 			return (false);
-		typename ft::Vector<T>::const_iterator tmp_lhs = lhs.begin();
-		typename ft::Vector<T>::const_iterator tmp_rhs = rhs.begin();
+		typename ft::vector<T>::const_iterator tmp_lhs = lhs.begin();
+		typename ft::vector<T>::const_iterator tmp_rhs = rhs.begin();
 		while (tmp_lhs != lhs.end())
 		{
 			if (tmp_rhs == rhs.end() || *tmp_lhs != *tmp_rhs)
@@ -534,28 +534,28 @@ namespace	ft
 	}
 
 	template < class T, class Alloc >
-	inline bool operator!= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator!= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{ return (!(lhs == rhs)); }
 	
 	template < class T, class Alloc >
-	inline bool operator<  (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator<  (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{ return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));	}
 
 	template < class T, class Alloc >
-	inline bool operator<= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator<= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{ return (!(rhs < lhs)); }
 
 	template < class T, class Alloc >
-	inline bool operator>  (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator>  (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{ return (rhs < lhs); }
 	
 	template < class T, class Alloc >
-	inline bool operator>= (const Vector<T, Alloc>& lhs, const Vector<T, Alloc>& rhs)
+	inline bool operator>= (const vector<T, Alloc>& lhs, const vector<T, Alloc>& rhs)
 	{ return (!(lhs < rhs)); }
 	
-	// Exchange contents of Vectors (function template)
+	// Exchange contents of vectors (function template)
 	template < class T, class Alloc >
-	inline void swap (Vector<T,Alloc>& x, Vector<T,Alloc>& y)
+	inline void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
 	{ x.swap(y); }
 }	// namespace ft
 

@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 18:33:47 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/08/14 19:12:51 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/10/29 14:35:13 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #include <vector>
 #include <iostream>
 #include <string>
+
+# include "vector.hpp"
 
 int		main(void)
 {
