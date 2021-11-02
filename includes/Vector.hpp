@@ -6,15 +6,12 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/02 16:11:25 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/02 16:24:17 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
-
-# include <iostream>
-# include <string>
 
 # include <memory>	// allocator의 header
 # include <cstddef>
