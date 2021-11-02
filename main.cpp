@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 18:33:47 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/29 14:35:13 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/02 16:12:17 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <string>
 
 # include "vector.hpp"
+# include "stack.hpp"
 
 int		main(void)
 {
@@ -62,5 +63,12 @@ int		main(void)
 	std::cout << std::endl;
 	std::cout << "capacity : \t"<< a.capacity() << std::endl;
 	std::cout << "size : \t\t" << a.size() << std::endl;
+
+	ft::stack<int>				b;
+	b.push(5);
+
+	std::cout << "stack===============" << std::endl;
+	std::cout << b.top() << std::endl;
+	
 	return (0);
 }

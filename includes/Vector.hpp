@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/29 15:07:30 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/02 16:11:25 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -509,9 +509,10 @@ namespace	ft
 		void clear()
 		{ erase_at_end(m_start); }
 
-		/* ALLOCATOR */
-		// Get allocator (public member function)
-		allocator_type get_allocator() const;
+		// /* ALLOCATOR */
+		// // Get allocator (public member function)
+		// allocator_type get_allocator() const
+		// { return (allocator_type(get_tp_allocator())); }
 	};	// class vector
 
 	/* NON-MEMBER FUNCTION OVERLOADS */
