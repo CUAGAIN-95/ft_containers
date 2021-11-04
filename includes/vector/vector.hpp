@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Vector.hpp                                         :+:      :+:    :+:   */
+/*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/02 16:24:17 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/04 21:09:57 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 # include <memory>	// allocator의 header
 # include <cstddef>
-# include "./iterator/normal_iterator.hpp"
-# include "./iterator/reverse_iterator.hpp"
-# include "utils.hpp" // iterator, cpp_type_traits 포함
+# include "../iterator/normal_iterator.hpp"
+# include "../iterator/reverse_iterator.hpp"
+# include "../utils/utils.hpp" // iterator, cpp_type_traits 포함
 
 namespace	ft
 {
