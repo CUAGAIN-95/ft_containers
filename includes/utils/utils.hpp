@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/28 23:36:21 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/08 06:00:41 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,16 @@ namespace	ft
 		}
 		return ((first1 == last1) && (first2 != last2));
 	}
+
+	/*
+	**	=======================================================================
+	*/
+
+	template < class Arg, class Result >
+	struct binary_function
+	{
+		typedef Arg		argument_type;
+		typedef Result	result_type;
+	};
 }
 #endif
