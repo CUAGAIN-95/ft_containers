@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/09 23:47:25 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/13 12:58:50 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,5 +188,277 @@ namespace ft
 		y->_right = x;
 		x->_parent = y;
 	}
+
+	template < class Val >
+	void	Rb_tree_insert_and_rebalance(const bool insert_left, \
+										Rb_tree_node<Val> *x, Rb_tree_node<Val> *p, \
+										Rb_tree_node<Val> &_header)
+	{
+		Rb_tree_node<Val> *&root = _header._parent;
+		x->_parent = p;
+		x->_left = 0;
+		x->_right = 0;
+		x->_color = red;
+		// insert
+		if (insert_left)
+		{
+			p->_left = x;
+			if (p == &_header)
+			{
+				_header._parent = x;
+				_header._right = x;
+			}
+			else if (p == _header._left)
+				_header._left = x;
+		}
+		else
+		{
+			p->_right = x;
+			if (p == _header._right)
+				_header._right = x;
+		}
+		// rebalance
+		while (x != root && x->_parent->color == red)
+		{
+			Rb_tree_node<Val>* const xpp = x->_parent->_parent;
+			if (x->_parent == xpp->_left)
+			{
+				Rb_tree_node<Val>* const y = xpp->_right;
+				if (y && y->_color == red)
+				{
+					x->_parent->color = black;
+					y->_color = black;
+					xpp->_color = red;
+					x = xpp;
+				}
+				else
+				{
+					if (x == x->_parent->_right)
+					{
+						x = x->_parent;
+						local_Rb_tree_rotate_left(x, root);
+					}
+					x->_parent->_color = black;
+					xpp->_color = red;
+					local_Rb_tree_rotate_right(x, root);
+				}
+			}
+			else
+			{
+				Rb_tree_node<Val>* const y = xpp->_left;
+				if (y && y->color == red)
+				{
+					x->_parent->_color = black;
+					y->_color = black;
+					xpp->_color = red;
+					x = xpp;
+				}
+				else
+				{
+					if (x == x->_parent->_left)
+					{
+						x = x->_parent;
+						local_Rb_tree_rotate_right(x, root);
+					}
+					x->_parent->_color = black;
+					xpp->_color = red;
+					local_Rb_tree_rotate_left(xpp, root);
+				}
+			}
+		}
+		root->_color = black;
+	}
+
+	template < class Val >
+	Rb_tree_node<Val>	*Rb_tree_rebalance_for_erase(Rb_tree_node<Val> *z, \
+													Rb_tree_node<Val> &_header)
+	{
+		Rb_tree_node<Val>	*&root = _header._parent;
+		Rb_tree_node<Val>	*&leftmost = _header._left;
+		Rb_tree_node<Val>	*&rightmost = _header._right;
+		Rb_tree_node<Val>	*y = z;
+		Rb_tree_node<Val>	*x = 0;
+		Rb_tree_node<Val>	*x_parent = 0;
+
+		if (y->_left == 0)			// z has at most one non-null child y == z
+			x = y->_right;			// x might be null
+		else if (y->_right == 0)	// z has exactly one non-null child y == z
+			x = y->_left;			// x is not null
+		else						// z has two non-null children
+		{
+			y = y->_right;			// z's successor. x might be null
+			while (y->_left != 0)
+				y = y->_left;
+			x = y->_right;
+		}
+
+		if (y != z)					// relink y in place of z. y is z's successor
+		{
+			z->_left->_parent = y;
+			y->_left = z->_left;
+			if (y != z->_right)
+			{
+				x_parent = y->_parent;
+				if (x)
+					x->_parent = y->_parent;
+				y->_parent->_left = x;	// y must be a child of _left
+				y->_right = z->_right;
+				z->_right->_parent = y;
+			}
+			else
+				x_parent = y;
+			if (root == z)
+				root = y;
+			else if (z->_parent->_left == z)
+				z->_parent->_left = y;
+			else
+				z->_parent->_right = y;
+			y->_parent = z->_parent;
+			ft::swap(y->_color, z->_color);
+			y = z;
+			// y now points to node to be actually deleted
+		}
+		else						// y == z
+		{
+			x_parent = y->_parent;
+			if (x)
+				x->_parent = y->_parent;
+			if (root == z)
+				root = x;
+			else if (z->_parent->_left == z)
+				z->_parent->_left = x;
+			else
+				z->_parent->_right = x;
+			if (leftmost == 0)
+			{
+				if (z->_right == 0)	// z->_left must be null also
+					leftmost = z->_parent;
+				// makes leftmost == _header if z == root
+				else
+					leftmost = Rb_tree_node<Val>::minimum(x);	// minimum
+			}
+			if (rigtmost == 0)
+			{
+				if (z->_left == 0)	// z->_right must be null also
+					rightmost = z->_parent;
+				// makes rightmost == _header if z == root
+				else				// x == z->_left
+					rightmost = Rb_tree_node<Val>::maximum(x);
+			}
+		}
+		if (y->_color != red)
+		{
+			while (x != root && (x == 0 || x->_color == black))
+			{
+				if (x == x_parent->_left)
+				{
+					Rb_tree_node<Val>	*w = x_parent->_right;
+					if (w->_color == red)
+					{
+						w->_color = black;
+						x_parent->_color = red;
+						local_Rb_tree_rotate_left(x_parent, root);
+						w = x_parent->_right;
+					}
+					if ((w->_left == 0 || w->_left->_color == black) && \
+						(w->_right == 0 || w->_right->_color == black))
+					{
+						w->_color = red;
+						x = x_parent;
+						x_parent = x_parent->_parent;
+					}
+					else
+					{
+						if (w->_right == 0 || w->right->_color == black)
+						{
+							w->_left->_color = black;
+							w->_color = red;
+							local_Rb_tree_rotate_right(w, root);
+							w = x_parent->_right;
+						}
+						w->_color = x_parent->_color;
+						x_parent->_color = black;
+						if (w->_right)
+							w->_right->_color = black;
+						local_Rb_tree_rotate_left(x_parent, root);
+						break ;
+					}
+				}
+				else
+				{
+					// same as above, with _right <-> _left
+					Rb_tree_node<Val>	*w = x_parent->_left;
+					if (w->_color == red)
+					{
+						w->_color = black;
+						x_parent->_color = red;
+						local_Rb_tree_rotate_right(x_parent, root);
+						w = x_parent->_left;
+					}
+					if ((w->_right == 0 || w->_right->_color == black) && \
+						(w->_left == 0 || w->_left->_color == black))
+					{
+						w->_color = red;
+						x = x_parent;
+						x_parent = x_parent->_parent;
+					}
+					else
+					{
+						if (w->_left == 0 || w->_left->_color == black)
+						{
+							w->_right->_color = black;
+							w->_color = red;
+							local_Rb_tree_rotate_left(w, root);
+							w = x_parent->_left;
+						}
+						w->_color = x_parent->_color;
+						x_parent->_color = black;
+						if (w->_left)
+							w->_left->_color = black;
+						local_Rb_tree_rotate_right(x_parent, root);
+						break ;
+					}
+				}
+			}
+			if (x)
+				x->_color = black;
+		}
+		return y;
+	}
+
+	template < typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc = std::allocator<Val> >
+	class Rb_tree
+	{
+		typedef typename Alloc::template rebind<Rb_tree_node<Val> >::other	Node_allocator;
+		public:
+			typedef Key										key_type;
+			typedef Val										value_type;
+			typedef value_type								*pointer;
+			typedef const value_type						*const_pointer;
+			typedef value_type								&reference;
+			typedef const value_type						&const_reference;
+			typedef Rb_tree_node<Val>						*Link_type;
+			typedef const Rb_tree_node<Val>					*const_Link_type;
+			typedef size_t									size_type;
+			typedef ptrdiff_t								difference_type;
+			typedef Alloc									allocator_type;
+
+			typedef ft::Rb_tree_iterator<value_type>		iterator;
+			typedef ft::Rb_tree_const_iterator<value_type>	const_iterator;
+			typedef ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+		protected:
+			Compare				_key_compare;
+			allocator_type		_alloc;
+			Node_allocator		_node_alloc;
+			Rb_tree_node<Val>	_header;
+			size_type			_node_count;		//keeps track of size of tree
+
+
+
+
+
+	};	// class Rb_tree
 }	// namespace ft
 #endif
