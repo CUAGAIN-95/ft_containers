@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/14 13:15:44 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/15 04:03:10 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -540,6 +540,103 @@ namespace ft
 				_header._left = &_header;
 				_header._right = &_header;
 			}
+
+			// M_copy
+			Link_type	clone_tree(Const_Link_type x, Link_type p)
+			{
+				Link_type	top = clone_node(x);
+				top->_parent = p;
+				if (x->_right)
+					top->_right = clone_tree(right(x), top);
+				p = top;
+				x = left(x);
+				while (x != 0)
+				{
+					Link_type y = clone_node(x);
+					p->_left = y;
+					y->_parent = p;
+					if (x->_right)
+						y->_right = clone_tree(right(x), y);
+					p = y;
+					x = left(x);
+				}
+				return (top);
+			}
+
+			// M_erase
+			void		erase_sub_tree(Link_type x)
+			{
+				while (x != 0)
+				{
+					erase_sub_tree(right(x));
+					Link_type y = left(x);
+					_alloc.destroy(&(x->_value_field));
+					_node_alloc.deallocate(x, 1);
+					x = y;
+				}
+			}
+
+			iterator		M_lower_bound(Link_type x, Link_type y, const Key &k)
+			{
+				while (x != 0)
+				{
+					if (!(_key_compare(key(x), k))) // key(x) >= k
+					{
+						y = x;
+						x = left(x);
+					}
+					else
+						x = right(x);
+				}
+				return (iterator(y));
+			}
+
+			const_iterator	M_lower_bound(Link_type x, Link_type y, const Key &k)
+			{
+				while (x != 0)
+				{
+					if (!(_key_compare(key(x), k))) // key(x) >= k
+					{
+						y = x;
+						x = left(x);
+					}
+					else
+						x = right(x);
+				}
+				return (const_iterator(y));
+			}
+
+			iterator		M_upper_bound(Link_type x, Link_type y, const Key &k)
+			{
+				while (x != 0)
+				{
+					if (!(_key_compare(k, key(x))))
+					{
+						y = x;
+						x = left(x);
+					}
+					else
+						x = right(x);
+				}
+				return (iterator(y));
+			}
+
+			const_iterator	M_upper_bound(Link_type x, Link_type y, const Key &k)
+			{
+				while (x != 0)
+				{
+					if (!(_key_compare(k, key(x))))
+					{
+						y = x;
+						x = left(x);
+					}
+					else
+						x = right(x);
+				}
+				return (const_iterator(y));
+			}
+
+
 	};	// class Rb_tree
 }	// namespace ft
 #endif
