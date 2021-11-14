@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 16:22:20 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/14 14:46:39 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/15 02:28:09 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,8 +169,101 @@ namespace ft
 		void					insert(InputIterator first, InputIterator last)
 		{ _tree.insert_unique(first, last); }
 
-		
+		// Erase elements
+		void					erase(iterator position)
+		{ _tree.erase(k); }
+
+		size_type				erase(const key_type &k)
+		{ return (_tree.erase(k)); }
+
+		void					erase(iterator first, iterator last)
+		{ _tree.erase(first, last); }
+
+		// Swap content
+		void					swap(map &x)
+		{ _tree.swap(x._tree); }
+
+		// Clear content
+		void					clear()
+		{ _tree.clear(); }
+
+		/* OBSERVERS */
+		// Return key comparison object
+		key_compare				key_comp() const
+		{ return (_tree.key_comp()); }
+
+		// Return value comparison object
+		value_compare			value_comp() const
+		{ return (value_compare(_tree.key_comp())); }
+
+		/* OPERATIONS */
+		// Get iterator to element
+		iterator				find(const key_type &k)
+		{ return (_tree.find(k)); }
+
+		const_iterator			find(const key_type &k) const
+		{ return (_tree.find(k)); }
+
+		// Count elements with a specific key
+		size_type				count(const key_type &k) const
+		{ return (_tree.find(k) == _tree.end() ? 0 : 1); }
+
+		// Return iterator to lower bound
+		iterator				lower_bound(const key_type &k)
+		{ return (_tree.lower_bound(k)); }
+
+		const_iterator			lower_bound(const key_type &k) const
+		{ return (_tree.lower_bound(k)); }
+
+		// Return iterator to upper bound
+		iterator				upper_bound(const key_type &k)
+		{ return (_tree.upper_bound(k)); }
+
+		const_iterator			upper_bound(const key_type &k) const
+		{ return (_tree.upper_bound(k)); }
+
+		// Get range of equal elements
+		ft::pair<const_iterator,const_iterator>	equal_range(const key_type &k) const
+		{ return (ft::make_pair(_tree.lower_bound(k), _tree.upper_bound(k))); }
+
+		ft::pair<iterator,iterator>				equal_rage(const key_type &k)
+		{ return (ft::make_pair(_tree.lower_bound(k), _tree.upper_bound(k))); }
 	};	//class map
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator== (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (x._tree == y._tree); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator!= (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (!(x == y)); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator< (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (x._tree < y._tree); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator> (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (y < x)); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator<= (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (!(y < x)); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline bool		operator>= (const map<_Key, _T, _Compare, _Alloc> &x, \
+								const map<_Key, _T, _Compare, _Alloc> &y)
+	{ return (!(x < y)); }
+
+	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
+	inline void		swap(const map<_Key, _T, _Compare, _Alloc> &x, \
+						const map<_Key, _T, _Compare, _Alloc> &y)
+	{ x.swap(y); }
 }	// namespace ft
 
 #endif
