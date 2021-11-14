@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/08 06:00:41 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/14 13:23:43 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,13 @@ namespace	ft
 	{
 		typedef Arg		argument_type;
 		typedef Result	result_type;
+	};
+
+	template < class T >
+	struct less: public binary_function<T,T,bool>
+	{
+		bool opearator() (const T &x, const T &y) const
+		{ return (x < y); }
 	};
 }
 #endif

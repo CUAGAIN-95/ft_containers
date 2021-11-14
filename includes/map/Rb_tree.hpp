@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/13 12:58:50 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/14 13:15:44 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,7 +426,7 @@ namespace ft
 		return y;
 	}
 
-	template < typename Key, typename Val, typename KeyOfValue, typename Compare, typename Alloc = std::allocator<Val> >
+	template < typename Key, typename Val, typename KeyOfVal, typename Compare, typename Alloc = std::allocator<Val> >
 	class Rb_tree
 	{
 		typedef typename Alloc::template rebind<Rb_tree_node<Val> >::other	Node_allocator;
@@ -438,7 +438,7 @@ namespace ft
 			typedef value_type								&reference;
 			typedef const value_type						&const_reference;
 			typedef Rb_tree_node<Val>						*Link_type;
-			typedef const Rb_tree_node<Val>					*const_Link_type;
+			typedef const Rb_tree_node<Val>					*Const_Link_type;
 			typedef size_t									size_type;
 			typedef ptrdiff_t								difference_type;
 			typedef Alloc									allocator_type;
@@ -455,10 +455,91 @@ namespace ft
 			Rb_tree_node<Val>	_header;
 			size_type			_node_count;		//keeps track of size of tree
 
+			Link_type			create_node(const value_type &x)
+			{
+				Link_type	tmp = _node_alloc.allocate(1);
+				_alloc.construct(&(tmp->_value_field), x);
+				return (tmp);
+			}
 
+			Link_type			clone_node(Const_Link_type x)
+			{
+				Link_type	tmp = create_node(x->_value_field);
+				tmp->_color = x->_color;
+				tmp->_parent = 0;
+				tmp->_left = 0;
+				tmp->_right = 0;
+				return (tmp);
+			}
 
+			Link_type				&root()
+			{ return (_header._parent); }
 
+			Const_Link_type			root() const
+			{ return (_header._parent); }
 
+			Link_type				&leftmost()
+			{ return (_header._left); }
+
+			Const_Link_type			leftmost() const
+			{ return (_header._left); }
+
+			Link_type				&rightmost()
+			{ return (_header._right); }
+
+			Const_Link_type			rightmost() const
+			{ return (_header._right); }
+
+			Link_type				M_begin()
+			{ return (_header._parent); }
+
+			Const_Link_type			M_begin() const
+			{ return (_header._parent); }
+
+			Link_type				M_end()
+			{ return (&_header); }
+
+			Const_Link_type			M_end() const
+			{ return (&_header); }
+
+			static const_reference	value(Const_Link_type x)
+			{ return (x->_value_field); }
+
+			static const Key		&key(Const_Link_type x)
+			{ return (KeyOfVal()(value(x))); }
+
+			static Link_type		left(Link_type x)
+			{ return (x->_left); }
+
+			static Const_Link_type	left(Const_Link_type x)
+			{ return (x->_left); }
+
+			static Link_type		right(Link_type x)
+			{ return (x->_right); }
+
+			static Const_Link_type	right(Const_Link_type x)
+			{ return (x->_right); }
+
+			static Link_type		minimum(Link_type x)
+			{ return (Rb_tree_node<Val>::minimum(x)); }
+
+			static Const_Link_type	minimum(Const_Link_type x)
+			{ return (Rb_tree_node<Val>::minimum(x)); }
+
+			static Link_type		maximum(Link_type x)
+			{ return (Rb_tree_node<Val>::maximum(x)); }
+
+			static Const_Link_type	maximum(Const_Link_type x)
+			{ return (Rb_tree_node<Val>::maximum(x)); }
+
+		private:
+			void	initialize()
+			{
+				_header._color = red;
+				_header._parent = 0;
+				_header._left = &_header;
+				_header._right = &_header;
+			}
 	};	// class Rb_tree
 }	// namespace ft
 #endif
