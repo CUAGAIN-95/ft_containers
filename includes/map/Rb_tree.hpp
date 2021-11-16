@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/16 13:36:10 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 15:00:26 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ namespace ft
 	struct Rb_tree_node
 	{
 		typedef Rb_tree_node<Val>*				Node_ptr;
-		typedef const Rb_tree_node<Val>*	Const_Node_ptr;
+		typedef const Rb_tree_node<Val>*		Const_Node_ptr;
 
 		Rb_tree_color	_color;
 		Node_ptr		_parent;
@@ -46,14 +46,14 @@ namespace ft
 		{
 			while (x->_left != 0)
 				x = x->_left;
-			return (x)
+			return (x);
 		}
 
 		static Const_Node_ptr	minimum(Const_Node_ptr x)
 		{
 			while (x->_left != 0)
 				x = x->_left;
-			return (x)
+			return (x);
 		}
 
 		static Node_ptr			maximum(Node_ptr x)
@@ -114,7 +114,7 @@ namespace ft
 	{
 		if (x->_color == red && x->_parent->_parent == x)
 			x = x->_right;
-		else if (x->left != 0)
+		else if (x->_left != 0)
 			return (Rb_tree_node<Val>::maximum(x->_left));
 		else
 		{
@@ -134,7 +134,7 @@ namespace ft
 	{
 		if (x->_color == red && x->_parent->_parent == x)
 			x = x->_right;
-		else if (x->left != 0)
+		else if (x->_left != 0)
 			return (Rb_tree_node<Val>::maximum(x->_left));
 		else
 		{
@@ -218,7 +218,7 @@ namespace ft
 				_header._right = x;
 		}
 		// rebalance
-		while (x != root && x->_parent->color == red)
+		while (x != root && x->_parent->_color == red)
 		{
 			Rb_tree_node<Val>* const xpp = x->_parent->_parent;
 			if (x->_parent == xpp->_left)
@@ -226,7 +226,7 @@ namespace ft
 				Rb_tree_node<Val>* const y = xpp->_right;
 				if (y && y->_color == red)
 				{
-					x->_parent->color = black;
+					x->_parent->_color = black;
 					y->_color = black;
 					xpp->_color = red;
 					x = xpp;
@@ -246,7 +246,7 @@ namespace ft
 			else
 			{
 				Rb_tree_node<Val>* const y = xpp->_left;
-				if (y && y->color == red)
+				if (y && y->_color == red)
 				{
 					x->_parent->_color = black;
 					y->_color = black;
@@ -337,7 +337,7 @@ namespace ft
 				else
 					leftmost = Rb_tree_node<Val>::minimum(x);	// minimum
 			}
-			if (rigtmost == 0)
+			if (rightmost() == 0)
 			{
 				if (z->_left == 0)	// z->_right must be null also
 					rightmost = z->_parent;
@@ -591,7 +591,7 @@ namespace ft
 				return (iterator(y));
 			}
 
-			const_iterator	M_lower_bound(Link_type x, Link_type y, const Key &k)
+			const_iterator	M_lower_bound(Link_type x, Link_type y, const Key &k) const
 			{
 				while (x != 0)
 				{
@@ -621,7 +621,7 @@ namespace ft
 				return (iterator(y));
 			}
 
-			const_iterator	M_upper_bound(Link_type x, Link_type y, const Key &k)
+			const_iterator	M_upper_bound(Link_type x, Link_type y, const Key &k) const
 			{
 				while (x != 0)
 				{
@@ -653,7 +653,7 @@ namespace ft
 			{ initialize(); }
 
 			Rb_tree(const Rb_tree &x)
-			: _key_compare(x._key_compare), _alloc(x._alloc, _node_alloc(Node_allocator(x._alloc)), _header(), _node_count(0)
+			: _key_compare(x._key_compare), _alloc(x._alloc), _node_alloc(Node_allocator(x._alloc)), _header(), _node_count(0)
 			{
 				initialize();
 				if (x.root() != 0) // x 가 빈 tree가 아님
@@ -801,7 +801,7 @@ namespace ft
 					const_iterator	before = position;
 					if (position._node == leftmost())
 						return (M_insert(leftmost(), leftmost(), v));
-					else if (_key_compare(key(--before)._node), KeyOfVal()(v))
+					else if (_key_compare(key((--before)._node), KeyOfVal()(v)))
 					{
 						if (right(before._node) == 0)
 							return (M_insert(0, before._node, v));
@@ -848,7 +848,7 @@ namespace ft
 
 			void		erase(iterator position)
 			{
-				Link_type y = Rb_tree_rebalance_for_erase(position._node, header);
+				Link_type y = Rb_tree_rebalance_for_erase(position._node, _header);
 				_alloc.destroy(&(y->_value_field));
 				_node_alloc.edallocate(y, 1);
 				--_node_count;
@@ -903,18 +903,8 @@ namespace ft
 	inline bool		operator==(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
 								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
 	{
-		if (x.size() != y.size())
-			return (false);
-		iterator	it1 = x.begin();
-		iterator	it2 = y.begin();
-		while (it1 != x.end())
-		{
-			if (*it1 != *it2)
-				return (false);
-			it1++;
-			it2++;
-		}
-		return (true);
+		return (x.size() == y.size() && \
+				ft::equal(x.begin(), x.end(), y.begin()));
 	}
 
 	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
@@ -935,7 +925,7 @@ namespace ft
 	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
 	inline bool		operator<=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
 								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (!(y < x))}
+	{ return (!(y < x)); }
 
 	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
 	inline bool		operator>=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \

@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 16:22:20 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/15 02:28:09 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 14:27:45 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <memory> // allocator 의 header
 # include "./pair.hpp"
+# include "./Rb_tree.hpp"
+# include "../utils/utils.hpp"
 
 namespace ft
 {
@@ -55,7 +57,7 @@ namespace ft
 	private:
 		// This turns a red-black tree into a [multi]map.
 		typedef typename Alloc::template rebind<value_type>::other	Pair_alloc_type;
-		typedef Rb_tree<key_type, value_type, Sellect1st<value_type>, key_compare, Pair_alloc_type>	Rep_type;
+		typedef Rb_tree<key_type, value_type, Select1st<value_type>, key_compare, Pair_alloc_type>	Rep_type;
 		Rep_type	_tree;
 
 	public:
@@ -171,7 +173,7 @@ namespace ft
 
 		// Erase elements
 		void					erase(iterator position)
-		{ _tree.erase(k); }
+		{ _tree.erase(position); }
 
 		size_type				erase(const key_type &k)
 		{ return (_tree.erase(k)); }
@@ -248,7 +250,7 @@ namespace ft
 	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
 	inline bool		operator> (const map<_Key, _T, _Compare, _Alloc> &x, \
 								const map<_Key, _T, _Compare, _Alloc> &y)
-	{ return (y < x)); }
+	{ return (y < x); }
 
 	template < typename _Key, typename _T, typename _Compare, typename _Alloc >
 	inline bool		operator<= (const map<_Key, _T, _Compare, _Alloc> &x, \

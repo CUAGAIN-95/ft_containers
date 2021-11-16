@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:38:54 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/08 23:10:40 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 14:59:52 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ namespace ft
 	template < class T >
 	struct Rb_tree_iterator
 	{
-		typedef T							value_type;
-		typedef T							&reference;
-		typedef T							*pointer;
+		typedef T								value_type;
+		typedef T								&reference;
+		typedef T								*pointer;
 
-		typedef bidirectional_iterator_tag	iterator_category;
-		typedef ptrdiff_t					difference_type;
+		typedef ft::bidirectional_iterator_tag	iterator_category;
+		typedef ptrdiff_t						difference_type;
 
-		typedef Rb_tree_iterator<T>			Self;
-		typedef Rb_tree_node<T>				*Link_type;
+		typedef Rb_tree_iterator<T>				Self;
+		typedef Rb_tree_node<T>					*Link_type;
 
 		Link_type	_node;
 
@@ -106,7 +106,7 @@ namespace ft
 		: _node(x) {}
 
 		Rb_tree_const_iterator(const iterator &it)
-		: _node(it.node) {}
+		: _node(it._node) {}
 
 		reference operator*() const
 		{ return (_node->_value_field); }

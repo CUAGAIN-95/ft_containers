@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/16 09:02:25 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 14:56:00 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,20 @@ namespace	ft
 		T tmp = a;
 		a = b;
 		b = tmp;
+	}
+
+
+	template < class II1, class II2 >
+	bool	equal(II1 first1, II1 last1, II2 first2)
+	{
+		while (first1 != last1)
+		{
+			if (*first1 != first2)
+				return (false);
+			first1++;
+			first2++;
+		}
+		return (true);
 	}
 
 	// II = InputIterator
@@ -83,7 +97,7 @@ namespace	ft
 	template < class T >
 	struct less: public binary_function<T,T,bool>
 	{
-		bool opearator() (const T &x, const T &y) const
+		bool operator() (const T &x, const T &y) const
 		{ return (x < y); }
 	};
 }
