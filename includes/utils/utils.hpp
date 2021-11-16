@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/14 13:23:43 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 09:02:25 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,28 @@ namespace	ft
 	*/
 
 	template < class Arg, class Result >
-	struct binary_function
+	struct unary_function
 	{
 		typedef Arg		argument_type;
 		typedef Result	result_type;
+	};
+
+	template < class Pair >
+	struct Select1st: public unary_function<Pair, typename Pair::first_type >
+	{
+		typename Pair::first_type &operator()(Pair &x) const
+		{ return (x.first); }
+
+		const typename Pair::first_type &operator()(const Pair &x) const
+		{ return (x.first); }
+	};
+
+	template < class Arg1, class Arg2, class Result >
+	struct binary_function
+	{
+		typedef Arg1		first_argument_type;
+		typedef Arg2		seconde_argument_type;
+		typedef Result		result_type;
 	};
 
 	template < class T >

@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/15 04:03:10 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/16 13:36:10 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -580,7 +580,7 @@ namespace ft
 			{
 				while (x != 0)
 				{
-					if (!(_key_compare(key(x), k))) // key(x) >= k
+					if (!(_key_compare(key(x), k))) // key(x) >= k x의 키값이 k 보다 크다
 					{
 						y = x;
 						x = left(x);
@@ -636,7 +636,310 @@ namespace ft
 				return (const_iterator(y));
 			}
 
+			iterator		M_insert(Const_Link_type x, Const_Link_type p, const Val &v)
+			{
+				bool		insert_left = (x != 0 || p == M_end() || \
+										_key_compare(KeyOfVal()(v), key(p)));
 
+				Link_type	z = create_node(v);
+				Rb_tree_insert_and_rebalance(insert_left, z, const_cast<Link_type>(p), _header);
+				++_node_count;
+				return (iterator(z));
+			}
+
+		public:
+			Rb_tree(const Compare &comp = Compare(), const allocator_type &a = allocator_type())
+			: _key_compare(comp), _alloc(a), _node_alloc(Node_allocator(a)), _header(), _node_count(0)
+			{ initialize(); }
+
+			Rb_tree(const Rb_tree &x)
+			: _key_compare(x._key_compare), _alloc(x._alloc, _node_alloc(Node_allocator(x._alloc)), _header(), _node_count(0)
+			{
+				initialize();
+				if (x.root() != 0) // x 가 빈 tree가 아님
+				{
+					root() = clone_tree(x.M_begin(), M_end());
+					leftmost() = Rb_tree::minimum(root());
+					rightmost() = Rb_tree::maximum(root());
+					_node_count = x.node_count;
+				}
+			}
+
+			~Rb_tree()
+			{ erase_sub_tree(M_begin()); }
+
+			Rb_tree	&operator=(const Rb_tree &x)
+			{
+				if (this != &x)
+				{
+					clear();
+					_key_compare = x._key_compare;
+					if (x.root() != 0)
+					{
+						root() = clone_tree(x.M_begin(), M_end());
+						leftmost() = Rb_tree::minimum(root());
+						rightmost() = Rb_tree::maximum(root());
+						_node_count = x._node_count;
+					}
+				}
+				return (*this);
+			}
+
+			Compare					key_comp() const
+			{ return (_key_compare); }
+
+			iterator				begin()
+			{ return (iterator(_header._left)); }
+
+			const_iterator			begin() const
+			{ return (const_iterator(_header._left)); }
+
+			iterator				end()
+			{ return (iterator(&_header)); }
+
+			const_iterator			end() const
+			{ return (const_iterator(&_header)); }
+
+			reverse_iterator		rbegin()
+			{ return (reverse_iterator(end())); }
+
+			const_reverse_iterator	rbegin() const
+			{ return (const_reverse_iterator(end())); }
+
+			reverse_iterator		rend()
+			{ return (reverse_iterator(begin())); }
+
+			const_reverse_iterator	rend() const
+			{ return (const_reverse_iterator(begin())); }
+
+			bool					empty() const
+			{ return (_node_count == 0); }
+
+			size_type				size() const
+			{ return (_node_count); }
+
+			size_type				max_size() const
+			{ return (Node_allocator().max_size()); }
+
+			void	swap(Rb_tree &t)
+			{
+				if (root() == 0) // 현재 tree는 비어있고 t는 비어있지 않음
+				{
+					if (t.root() != 0)
+					{
+						root() = t.root();
+						leftmost() = t.leftmost();
+						rightmost() = t.rightmost();
+						root()->_parent = M_end();
+
+						t.root() = 0;
+						t.leftmost() = t.M_end();
+						t.rightmost() = t.M_end();
+					}
+				}
+				else if (t.root() == 0) // 현재 tree는 비어있지 않고 t는 비어있음
+				{
+					t.root() = root();
+					t.leftmost() = leftmost();
+					t.rightmost() = rightmost();
+					t.root()->_parent = t.M_end();
+					
+					root() = 0;
+					leftmost() = M_end();
+					rightmost() = M_end();
+				}
+				else // 둘 다 비어있지 않음
+				{
+					ft::swap(root(), t.root());
+					ft::swap(leftmost(), t.leftmost());
+					ft::swap(rightmost(), t.rightmost());
+
+					root()->_parent() = M_end();
+					t.root()->_parent() = t.M_end();
+				}
+				ft::swap(_node_count, t._node_count);
+				ft::swap(_key_compare, t._key_compare);
+				ft::swap(_alloc, t._alloc);
+			}
+
+			pair<iterator,bool>	insert_unique(const value_type &v)
+			{
+				Link_type	x = M_begin();	// root
+				Link_type	y = M_end();	// header
+				bool		comp = true;
+
+				while (x != 0)
+				{
+					y = x;
+					comp = _key_compare(KeyOfVal()(v), key(x));	// key(v) < key(x)
+					x = comp ? left(x) : right(x);
+				}
+				iterator	j = iterator(y);	// y : x->_parent
+				if (comp)	// x = left(x)
+				{
+					if (j == begin())
+						return (pair<iterator,bool>(M_insert(x, y, v), true));	// y 왼쪽에 insert
+					else
+						--j;	// decrement
+				}
+				if (_key_compare(key(j._node), KeyOfVal()(v)))
+					return (pair<iterator,bool>(M_insert(x, y, v), true));
+				return (pair<iterator,bool>(j, false));
+			}
+
+			iterator			insert_unique(const_iterator position, const value_type &v)
+			{
+				if (position._node == M_end()) // position == header
+				{
+					if (size() > 0 && _key_compare(key(rightmost()), KeyOfVal()(v)))
+						return (M_insert(0, rightmost(), v));
+					else
+						return (insert_unique(v).first);
+				}
+				else if (_key_compare(KeyOfVal()(v), key(position._node)))
+				{
+					const_iterator	before = position;
+					if (position._node == leftmost())
+						return (M_insert(leftmost(), leftmost(), v));
+					else if (_key_compare(key(--before)._node), KeyOfVal()(v))
+					{
+						if (right(before._node) == 0)
+							return (M_insert(0, before._node, v));
+						else
+							return (M_insert(position._node, position._node, v));
+					}
+					else
+						return (insert_unique(v).first);
+				}
+				else if (_key_compare(key(position._node), KeyOfVal()(v)))
+				{
+					const_iterator	after = position;
+					if (position._node == rightmost())
+						return (M_insert(0, rightmost(), v));
+					else if (_key_compare(KeyOfVal()(v), key((++after)._node)))
+					{
+						if (right(position._node) == 0)
+							return (M_insert(0, position._node, v));
+						else
+							return (M_insert(after._node, after._node, v));
+					}
+					else
+						return (insert_unique(v).first);
+				}
+				else
+					return (iterator(const_cast<typename iterator::Link_type>(position._node)));
+			}
+
+			template < class InputIterator >
+			void		insert_unique(InputIterator first, InputIterator last)
+			{
+				for (; first != last; ++first)
+					insert_unique(end(), *first);
+			}
+
+			size_type	erase(const key_type &x)
+			{
+				iterator	equal = find(x);
+				if (equal == end())
+					return (0);
+				erase(equal);
+				return (1);
+			}
+
+			void		erase(iterator position)
+			{
+				Link_type y = Rb_tree_rebalance_for_erase(position._node, header);
+				_alloc.destroy(&(y->_value_field));
+				_node_alloc.edallocate(y, 1);
+				--_node_count;
+			}
+
+			void		erase(iterator first, iterator last)
+			{
+				if (first == begin() && last == end())
+					clear();
+				else
+				{
+					while (first != last)
+						erase(first++);
+				}
+			}
+
+			void		clear()
+			{
+				erase_sub_tree(M_begin());
+				leftmost() = M_end();
+				root() = 0;
+				rightmost() = M_end();
+				_node_count = 0;
+			}
+
+			iterator		find(const key_type &k)
+			{
+				iterator	j = M_lower_bound(M_begin(), M_end(), k);
+				return ((j == end() || _key_compare(k, key(j._node))) ? end() : j);
+			}
+
+			const_iterator	find(const key_type &k) const
+			{
+				const_iterator	j = M_lower_bound(M_begin(), M_end(), k);
+				return ((j == end() || _key_compare(k, key(j._node))) ? end() : j);
+			}
+
+			iterator		lower_bound(const key_type &k)
+			{ return (M_lower_bound(M_begin(), M_end(), k)); }
+
+			const_iterator	lower_bound(const key_type &k) const
+			{ return (M_lower_bound(M_begin(), M_end(), k)); }
+
+			iterator		upper_bound(const key_type &k)
+			{ return (M_upper_bound(M_begin(), M_end(), k)); }
+
+			const_iterator	upper_bound(const key_type &k) const
+			{ return (M_upper_bound(M_begin(), M_end(), k)); }
 	};	// class Rb_tree
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator==(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{
+		if (x.size() != y.size())
+			return (false);
+		iterator	it1 = x.begin();
+		iterator	it2 = y.begin();
+		while (it1 != x.end())
+		{
+			if (*it1 != *it2)
+				return (false);
+			it1++;
+			it2++;
+		}
+		return (true);
+	}
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator!=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{ return (!(x == y)); }
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator< (const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{ return (ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end())); }
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator>(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{ return (y < x); }
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator<=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{ return (!(y < x))}
+
+	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+	inline bool		operator>=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+	{ return (!(x < y)); }
 }	// namespace ft
 #endif
