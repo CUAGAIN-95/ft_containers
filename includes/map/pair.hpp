@@ -6,14 +6,14 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/04 21:11:55 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/05 18:25:51 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/18 07:01:24 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PAIR_HPP
 # define PAIR_HPP
 
-# include "../utils/utils.hpp"
+# include "utils/utils.hpp"
 
 namespace ft
 {
@@ -64,7 +64,7 @@ namespace ft
 	bool	operator<  (const pair<T1, T2> &x, const pair<T1, T2> &y)
 	{
 		return (x.first < y.first 
-			|| (!(y.first < x.first && x.second < y.second)));
+			|| (y.first <= x.first && x.second < y.second));
 	}
 
 	template < class T1, class T2 >

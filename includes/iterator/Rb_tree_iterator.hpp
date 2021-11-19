@@ -6,16 +6,16 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:38:54 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/16 14:59:52 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/19 16:48:56 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RB_TREE_ITERATOR_HPP
 # define RB_TREE_ITERATOR_HPP
 
-# include "../map/map.hpp"
-# include "../map/Rb_tree.hpp"
-# include "./iterator_base_types.hpp"
+# include "map/map.hpp"
+# include "map/Rb_tree.hpp"
+# include "iterator_base_types.hpp"
 
 namespace ft
 {
@@ -85,17 +85,17 @@ namespace ft
 	template < class T >
 	struct Rb_tree_const_iterator
 	{
-		typedef T							value_type;
-		typedef const T						&reference;
-		typedef const T						*pointer;
+		typedef T								value_type;
+		typedef const T							&reference;
+		typedef const T							*pointer;
 
-		typedef Rb_tree_iterator<T>			iterator;
+		typedef Rb_tree_iterator<T>				iterator;
 
-		typedef bidirectional_iterator_tag	iterator_category;
-		typedef ptrdiff_t					difference_type;
+		typedef ft::bidirectional_iterator_tag	iterator_category;
+		typedef ptrdiff_t						difference_type;
 
-		typedef Rb_tree_const_iterator<T>	Self;
-		typedef Rb_tree_node<T>				*Link_type;
+		typedef Rb_tree_const_iterator<T>		Self;
+		typedef Rb_tree_node<T>					*Link_type;
 
 		Link_type	_node;
 

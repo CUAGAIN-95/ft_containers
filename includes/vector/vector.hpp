@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/04 21:09:57 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/18 06:32:36 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 # include <memory>	// allocator의 header
 # include <cstddef>
-# include "../iterator/normal_iterator.hpp"
-# include "../iterator/reverse_iterator.hpp"
-# include "../utils/utils.hpp" // iterator, cpp_type_traits 포함
+# include "iterator/normal_iterator.hpp"
+# include "iterator/reverse_iterator.hpp"
+# include "utils/utils.hpp" // iterator, cpp_type_traits 포함
 
 namespace	ft
 {
@@ -109,7 +109,7 @@ namespace	ft
 					// insert
 					new_finish = uninitialized_fill_n_val(new_finish, n, val);
 					// position 이후 값들 copy
-					new_finish = uninitialized_copy_a(position.bace(), m_finish, new_finish);
+					new_finish = uninitialized_copy_a(position.base(), m_finish, new_finish);
 					clear();
 					m_alloc.deallocate(m_start, capacity());
 					m_start = new_start;
@@ -444,7 +444,7 @@ namespace	ft
 	
 		// fill
 		void insert (iterator position, size_type n, const value_type& val)
-		{ m_fill_insert(position, n, val); }
+		{ insert_dispatch(position, n, val, __true_type()); }
 
 		// range
 		template < class InputIterator >

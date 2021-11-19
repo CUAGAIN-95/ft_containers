@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/16 15:00:26 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/18 20:52:27 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define RB_TREE_HPP
 
 # include <memory>
-# include "./pair.hpp"
-# include "../iterator/Rb_tree_iterator.hpp"
-# include "../iterator/reverse_iterator.hpp"
+# include "pair.hpp"
+# include "iterator/Rb_tree_iterator.hpp"
+# include "iterator/reverse_iterator.hpp"
 
 namespace ft
 {
@@ -337,7 +337,7 @@ namespace ft
 				else
 					leftmost = Rb_tree_node<Val>::minimum(x);	// minimum
 			}
-			if (rightmost() == 0)
+			if (rightmost == 0)
 			{
 				if (z->_left == 0)	// z->_right must be null also
 					rightmost = z->_parent;
@@ -369,7 +369,7 @@ namespace ft
 					}
 					else
 					{
-						if (w->_right == 0 || w->right->_color == black)
+						if (w->_right == 0 || w->_right->_color == black)
 						{
 							w->_left->_color = black;
 							w->_color = red;
@@ -591,7 +591,7 @@ namespace ft
 				return (iterator(y));
 			}
 
-			const_iterator	M_lower_bound(Link_type x, Link_type y, const Key &k) const
+			const_iterator	M_lower_bound(Const_Link_type x, Const_Link_type y, const Key &k) const
 			{
 				while (x != 0)
 				{
@@ -621,7 +621,7 @@ namespace ft
 				return (iterator(y));
 			}
 
-			const_iterator	M_upper_bound(Link_type x, Link_type y, const Key &k) const
+			const_iterator	M_upper_bound(Const_Link_type x, Const_Link_type y, const Key &k) const
 			{
 				while (x != 0)
 				{
@@ -661,7 +661,7 @@ namespace ft
 					root() = clone_tree(x.M_begin(), M_end());
 					leftmost() = Rb_tree::minimum(root());
 					rightmost() = Rb_tree::maximum(root());
-					_node_count = x.node_count;
+					_node_count = x._node_count;
 				}
 			}
 
@@ -754,8 +754,8 @@ namespace ft
 					ft::swap(leftmost(), t.leftmost());
 					ft::swap(rightmost(), t.rightmost());
 
-					root()->_parent() = M_end();
-					t.root()->_parent() = t.M_end();
+					root()->_parent = M_end();
+					t.root()->_parent = t.M_end();
 				}
 				ft::swap(_node_count, t._node_count);
 				ft::swap(_key_compare, t._key_compare);
@@ -850,7 +850,7 @@ namespace ft
 			{
 				Link_type y = Rb_tree_rebalance_for_erase(position._node, _header);
 				_alloc.destroy(&(y->_value_field));
-				_node_alloc.edallocate(y, 1);
+				_node_alloc.deallocate(y, 1);
 				--_node_count;
 			}
 
@@ -897,15 +897,26 @@ namespace ft
 
 			const_iterator	upper_bound(const key_type &k) const
 			{ return (M_upper_bound(M_begin(), M_end(), k)); }
-	};	// class Rb_tree
 
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator==(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{
-		return (x.size() == y.size() && \
-				ft::equal(x.begin(), x.end(), y.begin()));
-	}
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator==(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{
+				if (x.size() != y.size())
+					return false;
+				iterator it1 = x.begin();
+				iterator it2 = y.begin();
+				while (it1 != x.end())
+				{
+					if (*it1 != *it2)
+						return false;
+					++it1;
+					++it2;
+				}
+				return true;
+			}
+
+	};	// class Rb_tree
 
 	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
 	inline bool		operator!=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \

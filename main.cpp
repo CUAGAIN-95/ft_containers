@@ -1,27 +1,11 @@
-#include <iostream>  // cout
-
-#include <stack>
-// #include "./includes/stack/stack.hpp"
-#include <vector>
-#include "./includes/vector/vector.hpp"
-#include <map>
-// #include "./includes/map/map.hpp"
+#include "testfiles/testvector.hpp"
+#include "testfiles/testmap.hpp"
+#include "testfiles/teststack.hpp"
 
 int main(void)
 {
-	ft::vector<int> first;                                // empty vector of ints
-	ft::vector<int> second (4,100);                       // four ints with value 100
-	ft::vector<int> third (second.begin(),second.end());  // iterating through second
-	ft::vector<int> fourth (third);                       // a copy of third
-
-	// the iterator constructor can also be used to construct from arrays:
-	int myints[] = {16,2,77,29};
-	ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
-
-	std::cout << "The contents of fifth are:";
-	for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
-	std::cout << ' ' << *it;
-	std::cout << '\n';
-
-  return 0;
+	testvector();
+	testmap();
+	teststack();
+	return (0);
 }

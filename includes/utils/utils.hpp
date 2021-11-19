@@ -6,14 +6,14 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/19 15:32:22 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/16 14:56:00 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/18 18:30:33 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
 # define UTILS_HPP
 
-# include "./cpp_type_traits.hpp"
+# include "cpp_type_traits.hpp"
 
 namespace	ft
 {
@@ -38,18 +38,18 @@ namespace	ft
 	}
 
 
-	template < class II1, class II2 >
-	bool	equal(II1 first1, II1 last1, II2 first2)
-	{
-		while (first1 != last1)
-		{
-			if (*first1 != first2)
-				return (false);
-			first1++;
-			first2++;
-		}
-		return (true);
-	}
+	// template < class II1, class II2 >
+	// bool	equal(II1 first1, II1 last1, II2 first2)
+	// {
+	// 	while (first1 != last1)
+	// 	{
+	// 		if (*first1 != *first2)
+	// 			return (false);
+	// 		first1++;
+	// 		first2++;
+	// 	}
+	// 	return (true);
+	// }
 
 	// II = InputIterator
 	template < class II1, class II2>
