@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/20 15:36:26 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/21 21:23:23 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,7 +329,7 @@ namespace ft
 				z->_parent->_left = x;
 			else
 				z->_parent->_right = x;
-			if (leftmost == 0)
+			if (leftmost == z)
 			{
 				if (z->_right == 0)	// z->_left must be null also
 					leftmost = z->_parent;
@@ -337,7 +337,7 @@ namespace ft
 				else
 					leftmost = Rb_tree_node<Val>::minimum(x);	// minimum
 			}
-			if (rightmost == 0)
+			if (rightmost == z)
 			{
 				if (z->_left == 0)	// z->_right must be null also
 					rightmost = z->_parent;

@@ -190,7 +190,7 @@ void	test_clear(std::map<Key,T>& orig, ft::map<Key,T>& my)
 {
 	orig.clear();
 	my.clear();
-	compare_two_map("test_swap", orig, my);
+	compare_two_map("test_clear", orig, my);
 }
 
 // template < typename Key, typename T >
