@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/18 20:52:27 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/20 15:36:26 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 # define RB_TREE_HPP
 
 # include <memory>
-# include "pair.hpp"
-# include "iterator/Rb_tree_iterator.hpp"
-# include "iterator/reverse_iterator.hpp"
+# include "../map/pair.hpp"
+# include "../iterator/Rb_tree_iterator.hpp"
+# include "../iterator/reverse_iterator.hpp"
 
 namespace ft
 {
@@ -916,31 +916,30 @@ namespace ft
 				return true;
 			}
 
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator< (const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{ return (ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end())); }
+
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator!=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{ return (!(x == y)); }
+
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator>(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{ return (y < x); }
+
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator<=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{ return (!(y < x)); }
+
+			template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
+			friend bool		operator>=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
+										const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
+			{ return (!(x < y)); }
 	};	// class Rb_tree
-
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator!=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (!(x == y)); }
-
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator< (const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end())); }
-
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator>(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (y < x); }
-
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator<=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (!(y < x)); }
-
-	template <typename _Key, typename _Val, typename _KeyOfValue, typename _Compare, typename _Alloc>
-	inline bool		operator>=(const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &x, \
-								const Rb_tree<_Key, _Val, _KeyOfValue, _Compare, _Alloc> &y)
-	{ return (!(x < y)); }
 }	// namespace ft
 #endif

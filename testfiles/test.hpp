@@ -3,16 +3,13 @@
 
 # include <stdarg.h>
 # include <iostream>
-// # include <list>
+
 # include <vector>
 # include <map>
 # include <stack>
-// # include <queue>
-// # include "../list/list.hpp"
-# include "vector/vector.hpp"
-# include "map/map.hpp"
-# include "stack/stack.hpp"
-// # include "../queue/queue.hpp"
+# include "../includes/vector/vector.hpp"
+# include "../includes/map/map.hpp"
+# include "../includes/stack/stack.hpp"
 
 template < typename Orig, typename My >
 void	set_two_container(Orig &tmp1, My &tmp2, int num, ...)

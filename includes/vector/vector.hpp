@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/28 17:39:17 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/18 06:32:36 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/21 20:00:26 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,9 @@
 
 # include <memory>	// allocator의 header
 # include <cstddef>
-# include "iterator/normal_iterator.hpp"
-# include "iterator/reverse_iterator.hpp"
-# include "utils/utils.hpp" // iterator, cpp_type_traits 포함
+# include "../iterator/normal_iterator.hpp"
+# include "../iterator/reverse_iterator.hpp"
+# include "../utils/utils.hpp" // iterator, cpp_type_traits 포함
 
 namespace	ft
 {
@@ -278,7 +278,12 @@ namespace	ft
 
 		// Return maximum size (public member function)
 		size_type max_size() const
-		{ return (m_alloc.max_size()); }
+		{
+			const size_t	diffmax = std::numeric_limits<difference_type>::max();
+			const size_t	allocmax = m_alloc.max_size();
+
+			return (std::min(diffmax, allocmax));
+		}
 
 		// Change size (public member function)
 		void resize (size_type n, value_type val = value_type())

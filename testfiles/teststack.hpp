@@ -56,11 +56,9 @@ void	test_operators(std::stack<T>& orig, ft::stack<T>& my)
 	tmp1.push(1.1);
 	tmp1.push(2.2);
 	tmp1.push(3.3);
-
 	tmp2.push(1.1);
 	tmp2.push(2.2);
 	tmp2.push(3.3);
-	
 	compare_ret("operator == ", orig == tmp1, my == tmp2);
 	compare_ret("operator != ", orig != tmp1, my != tmp2);
 	tmp1.pop();

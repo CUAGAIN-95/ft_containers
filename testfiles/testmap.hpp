@@ -364,8 +364,8 @@ void	test_nonmember_swap(std::map<Key,T>& orig, ft::map<Key,T>& my)
 	tmp1.insert(std::make_pair("num4", 4));
 	tmp2.insert(ft::make_pair("num4", 4));
 
-	swap(orig, tmp1);
-	swap(my, tmp2);
+	std::swap(orig, tmp1);
+	std::swap(my, tmp2);
 	compare_two_map("test_nonmember_swap", orig, my);
 	orig.clear();
 	my.clear();

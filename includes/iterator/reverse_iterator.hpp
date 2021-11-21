@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 22:43:48 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/10/29 15:04:16 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/21 16:44:02 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,35 +26,35 @@ namespace ft
 						typename iterator_traits<Iterator>::reference>
 	{
 		protected:
-			Iterator										current;
-			typedef iterator_traits<Iterator>				traits_type;
-
+			Iterator													current;
 		public:
-			typedef Iterator	iterator_type;
-			typedef typename traits_type::difference_type	difference_type;
-			typedef typename traits_type::pointer			pointer;
-			typedef typename traits_type::reference			reference;
+			typedef Iterator											iterator_type;
+			typedef typename iterator_traits<Iterator>::difference_type	difference_type;
+			typedef typename iterator_traits<Iterator>::pointer			pointer;
+			typedef typename iterator_traits<Iterator>::reference		reference;
 
 			// default constructor
-			reverse_iterator() : current() { }
+			reverse_iterator()
+			: current() {}
 
-			explicit
-			reverse_iterator(iterator_type x) : current(x) { }
+			explicit reverse_iterator(iterator_type x)
+			: current(x) {}
 
 			// copy constructor
-			reverse_iterator(const reverse_iterator& x) : current(x.current) { }
+			reverse_iterator(const reverse_iterator& x)
+			: current(x.current) {}
 
 			template < class _Iter >
 			reverse_iterator(const reverse_iterator<_Iter>& x)
-			:	current(x.base()) { }
+			: current(x.base()) {}
 
 			iterator_type		base() const
 			{ return (current); }
 
 			reference			operator*() const
 			{
-				Iterator	tmp = current;
-				return (*--tmp);
+				iterator_type	tmp = current;
+				return (*(--tmp));
 			}
 
 			pointer				operator->() const
@@ -66,9 +66,9 @@ namespace ft
 				return (*this);
 			}
 
-			reverse_iterator&	operator++(int)
+			reverse_iterator	operator++(int)
 			{
-				reverse_iterator	tmp = *this;
+				reverse_iterator	tmp(*this);
 				--current;
 				return (tmp);
 			}
@@ -79,9 +79,9 @@ namespace ft
 				return (*this);
 			}
 
-			reverse_iterator&	operator--(int)
+			reverse_iterator	operator--(int)
 			{
-				reverse_iterator	tmp = *this;
+				reverse_iterator	tmp(*this);
 				++current;
 				return (tmp);
 			}
