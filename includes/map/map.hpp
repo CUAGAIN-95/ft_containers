@@ -6,14 +6,14 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 16:22:20 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/20 15:30:57 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/23 22:23:44 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 # define MAP_HPP
 
-# include <memory> // allocator 의 header
+// # include <memory> // allocator 의 header
 # include "Rb_tree.hpp"
 # include "pair.hpp"
 # include "../utils/utils.hpp"
@@ -228,7 +228,7 @@ namespace ft
 		ft::pair<const_iterator,const_iterator>	equal_range(const key_type &k) const
 		{ return (ft::make_pair(_tree.lower_bound(k), _tree.upper_bound(k))); }
 
-		ft::pair<iterator,iterator>				equal_rage(const key_type &k)
+		ft::pair<iterator,iterator>				equal_range(const key_type &k)
 		{ return (ft::make_pair(_tree.lower_bound(k), _tree.upper_bound(k))); }
 
 		template < typename _Key, typename _T, typename _Compare, typename _Alloc >

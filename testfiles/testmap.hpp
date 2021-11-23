@@ -193,12 +193,82 @@ void	test_clear(std::map<Key,T>& orig, ft::map<Key,T>& my)
 	compare_two_map("test_clear", orig, my);
 }
 
-// template < typename Key, typename T >
-// void	test_key_comp(std::map<Key,T>& orig, ft::map<Key,T>& my)
-// {
 
-// }
+template < typename Key, typename T >
+void	test_key_comp(std::map<Key,T>& orig, ft::map<Key,T>& my)
+{
+	orig.insert(std::make_pair("num1", 1));
+	my.insert(ft::make_pair("num1", 1));
+	orig.insert(std::make_pair("num2", 2));
+	my.insert(ft::make_pair("num2", 2));
+	orig.insert(std::make_pair("num3", 3));
+	my.insert(ft::make_pair("num3", 3));
 
+	std::cout.width(42);
+	std::cout << "test_key_comp" << " >>\n" ;
+
+	Key highest1 = orig.rbegin()->first;
+	typename std::map<Key,T>::key_compare origcomp = orig.key_comp();
+	typename std::map<Key,T>::iterator it1 = orig.begin();
+
+	std::cout.width(42);
+	std::cout << "orig map:\t";
+	do {
+		std::cout << "(" << it1->first << ", " << it1->second << ") ";
+	} while (origcomp((*it1++).first, highest1));
+	std::cout << std::endl;
+
+	Key highest2 = orig.rbegin()->first;
+	typename ft::map<Key,T>::key_compare mycomp = my.key_comp();
+	typename ft::map<Key,T>::iterator it2 = my.begin();
+
+	std::cout.width(42);
+	std::cout << "my map:\t";
+	do {
+		std::cout << "(" << it2->first << ", " << it2->second << ") ";
+	} while (mycomp((*it2++).first, highest2));
+	std::cout << std::endl;
+
+	orig.clear();
+	my.clear();
+}
+
+template < typename Key, typename T >
+void	test_value_comp(std::map<Key,T>& orig, ft::map<Key,T>& my)
+{
+	orig.insert(std::make_pair("num1", 1));
+	my.insert(ft::make_pair("num1", 1));
+	orig.insert(std::make_pair("num2", 2));
+	my.insert(ft::make_pair("num2", 2));
+	orig.insert(std::make_pair("num3", 3));
+	my.insert(ft::make_pair("num3", 3));
+
+	std::cout.width(42);
+	std::cout << "test_value_comp" << " >>\n" ;
+
+	std::pair<Key,T> highest1 = *orig.rbegin();	// last element
+	typename std::map<Key,T>::iterator it1 = orig.begin();
+
+	std::cout.width(42);
+	std::cout << "orig map:\t";
+	do {
+		std::cout << "(" << it1->first << ", " << it1->second << ") ";
+	} while (orig.value_comp()(*it1++, highest1));
+	std::cout << std::endl;
+
+	ft::pair<Key,T> highest2 = *my.rbegin();	// last element
+	typename ft::map<Key,T>::iterator it2 = my.begin();
+
+	std::cout.width(42);
+	std::cout << "my map:\t";
+	do {
+		std::cout << "(" << it2->first << ", " << it2->second << ") ";
+	} while (my.value_comp()(*it2++, highest2));
+	std::cout << std::endl;
+
+	orig.clear();
+	my.clear();
+}
 template < typename Key, typename T >
 void	test_find(std::map<Key,T>& orig, ft::map<Key,T>& my)
 {
@@ -416,8 +486,8 @@ void	testmap()
 	test_erase_by_range(orig, my);
 	test_swap(orig, my);
 	test_clear(orig, my);
-	// test_key_comp(orig, my);
-	// test_value_comp(orig, my);
+	test_key_comp(orig, my);
+	test_value_comp(orig, my);
 	test_find(orig, my);
 	test_count(orig, my);
 	test_lower_bound(orig, my);

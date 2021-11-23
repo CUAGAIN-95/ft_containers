@@ -6,7 +6,7 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:38:54 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/21 15:55:09 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/23 22:25:12 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ namespace ft
 		typedef ptrdiff_t						difference_type;
 
 		typedef Rb_tree_const_iterator<T>		Self;
-		typedef Rb_tree_node<T>					*Link_type;
+		typedef const Rb_tree_node<T>			*Link_type;
 
 		Link_type	_node;
 
@@ -105,8 +105,8 @@ namespace ft
 		explicit Rb_tree_const_iterator(Link_type x)
 		: _node(x) {}
 
-		Rb_tree_const_iterator(const iterator &it)
-		: _node(it._node) {}
+		Rb_tree_const_iterator(const iterator &x)
+		: _node(x._node) {}
 
 		reference operator*() const
 		{ return (_node->_value_field); }

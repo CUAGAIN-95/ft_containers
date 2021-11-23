@@ -6,14 +6,13 @@
 /*   By: yeonhlee <yeonhlee@student.42seoul.kr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 20:20:16 by yeonhlee          #+#    #+#             */
-/*   Updated: 2021/11/21 21:23:23 by yeonhlee         ###   ########.fr       */
+/*   Updated: 2021/11/23 22:25:25 by yeonhlee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RB_TREE_HPP
 # define RB_TREE_HPP
 
-# include <memory>
 # include "../map/pair.hpp"
 # include "../iterator/Rb_tree_iterator.hpp"
 # include "../iterator/reverse_iterator.hpp"
@@ -580,7 +579,7 @@ namespace ft
 			{
 				while (x != 0)
 				{
-					if (!(_key_compare(key(x), k))) // key(x) >= k x의 키값이 k 보다 크다
+					if (!_key_compare(key(x), k)) // key(x) >= k x의 키값이 k 보다 크다
 					{
 						y = x;
 						x = left(x);
@@ -595,7 +594,7 @@ namespace ft
 			{
 				while (x != 0)
 				{
-					if (!(_key_compare(key(x), k))) // key(x) >= k
+					if (!_key_compare(key(x), k)) // key(x) >= k
 					{
 						y = x;
 						x = left(x);
@@ -610,7 +609,7 @@ namespace ft
 			{
 				while (x != 0)
 				{
-					if (!(_key_compare(k, key(x))))
+					if (_key_compare(k, key(x)))
 					{
 						y = x;
 						x = left(x);
@@ -625,7 +624,7 @@ namespace ft
 			{
 				while (x != 0)
 				{
-					if (!(_key_compare(k, key(x))))
+					if (_key_compare(k, key(x)))
 					{
 						y = x;
 						x = left(x);
@@ -719,7 +718,11 @@ namespace ft
 			{ return (_node_count); }
 
 			size_type				max_size() const
-			{ return (Node_allocator().max_size()); }
+			{
+				const size_type diffmax = std::numeric_limits<difference_type>::max();
+				const size_type allocmax = Node_allocator().max_size();
+				return (diffmax > allocmax) ? allocmax : diffmax;
+			}
 
 			void	swap(Rb_tree &t)
 			{
@@ -904,8 +907,8 @@ namespace ft
 			{
 				if (x.size() != y.size())
 					return false;
-				iterator it1 = x.begin();
-				iterator it2 = y.begin();
+				const_iterator it1 = x.begin();
+				const_iterator it2 = y.begin();
 				while (it1 != x.end())
 				{
 					if (*it1 != *it2)
